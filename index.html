@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gugu8 — I write fast code that lasts</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='5' fill='%2317324e'/><text x='12' y='17' font-size='11' text-anchor='middle' fill='%23e4c65b' font-family='monospace' font-weight='bold'>G8</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/cinzel@latest/latin-700-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/cinzel@latest/latin-900-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-700-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-500-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/spectral@latest/latin-400-italic.css">
+<style>
+:root{
+  --sky:#3f97e0; --sky2:#8ecdf4; --cloud:#f7f3e8;
+  --marble:#efe6cf; --marble2:#e2d5b4; --marble3:#cbb98f;
+  --ink:#17324e; --ink2:#0e2238; --ink3:#0a1a2c;
+  --gold:#c19a2e; --gold2:#e4c65b;
+  --green:#3f9b4f; --green2:#2c6e3a;
+  --terra:#c96f3a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+::selection{background:var(--gold2);color:var(--ink)}
+body{
+  font-family:'Spectral',Georgia,serif;
+  color:var(--ink);
+  background:linear-gradient(180deg,var(--sky) 0%,var(--sky2) 34%,#cfe7f8 62%,#efe9d8 100%);
+  min-height:100vh; overflow-x:hidden;
+}
+.mono{font-family:'JetBrains Mono',monospace}
+h1,h2,h3,.cinzel{font-family:'Cinzel',serif}
+.ic{width:1em;height:1em;display:inline-block;vertical-align:-0.12em;flex:none}
+
+/* ---------- SKY & CLOUDS ---------- */
+#sky{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.cloud{position:absolute;background:var(--cloud);border-radius:999px;opacity:.92;animation:drift linear infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:999px}
+.cloud::before{width:55%;height:160%;left:12%;bottom:22%}
+.cloud::after{width:38%;height:110%;right:10%;bottom:30%}
+.cloud:nth-child(1){width:180px;height:56px;top:9%;animation-duration:95s}
+.cloud:nth-child(2){width:260px;height:78px;top:20%;animation-duration:130s;animation-delay:-40s;opacity:.8}
+.cloud:nth-child(3){width:140px;height:44px;top:38%;animation-duration:80s;animation-delay:-20s;opacity:.65}
+.cloud:nth-child(4){width:300px;height:90px;top:58%;animation-duration:150s;animation-delay:-90s;opacity:.5}
+.cloud:nth-child(5){width:200px;height:60px;top:76%;animation-duration:110s;animation-delay:-60s;opacity:.4}
+.cloud:nth-child(6){width:120px;height:38px;top:4%;animation-duration:70s;animation-delay:-10s}
+@keyframes drift{from{transform:translateX(-30vw)}to{transform:translateX(120vw)}}
+
+/* ---------- PROGRESS ---------- */
+#progress{position:fixed;top:0;left:0;height:5px;width:0;background:var(--gold2);border-right:2px solid var(--ink);z-index:200}
+
+/* ---------- NAV ---------- */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(239,230,207,.92);backdrop-filter:blur(8px);
+  border-bottom:3px solid var(--ink);
+  display:flex;align-items:center;gap:1rem;
+  padding:.7rem clamp(1rem,4vw,2.5rem);
+}
+.seal{
+  font-family:'Cinzel',serif;font-weight:900;font-size:1.05rem;letter-spacing:.06em;
+  background:var(--ink);color:var(--gold2);
+  border:2px solid var(--ink);box-shadow:0 3px 0 var(--gold);
+  padding:.45rem .7rem;border-radius:8px;cursor:pointer;user-select:none;transition:transform .25s;
+}
+.seal:hover{transform:rotate(-3deg) scale(1.05)}
+nav.links{display:flex;gap:.2rem;margin-left:auto}
+nav.links a{
+  font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;text-decoration:none;color:var(--ink);
+  padding:.55rem .9rem;border-radius:8px;border:2px solid transparent;transition:.2s;
+}
+nav.links a:hover{border-color:var(--ink);background:var(--marble2);box-shadow:0 3px 0 var(--ink);transform:translateY(-2px)}
+#burger{display:none;margin-left:auto;background:var(--marble);border:2px solid var(--ink);border-radius:8px;box-shadow:0 3px 0 var(--ink);padding:.5rem .6rem;cursor:pointer;color:var(--ink)}
+#burger .ic{width:1.2em;height:1.2em}
+#mobileMenu{display:none;position:fixed;top:70px;left:0;right:0;z-index:99;background:var(--marble);border-bottom:3px solid var(--ink);flex-direction:column;padding:1rem}
+#mobileMenu.open{display:flex}
+#mobileMenu a{font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:.85rem;color:var(--ink);text-decoration:none;padding:.8rem 1rem;border-radius:8px}
+#mobileMenu a:hover{background:var(--marble2)}
+
+/* ---------- BUTTONS ---------- */
+.btn{
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.8rem;
+  letter-spacing:.12em;text-transform:uppercase;
+  background:var(--marble);color:var(--ink);
+  border:2px solid var(--ink);border-radius:10px;
+  padding:.75rem 1.3rem;cursor:pointer;box-shadow:0 6px 0 var(--ink);
+  transition:transform .15s, box-shadow .15s;text-decoration:none;display:inline-flex;align-items:center;gap:.55rem;
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 9px 0 var(--ink)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
+.btn-gold{background:var(--gold2)}
+.btn-ink{background:var(--ink);color:var(--gold2);box-shadow:0 6px 0 var(--gold)}
+.btn-ink:hover{box-shadow:0 9px 0 var(--gold)}
+
+/* ---------- LAYOUT ---------- */
+main{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem)}
+section{padding:clamp(3.5rem,8vw,6rem) 0}
+.sec-head{margin-bottom:2.6rem}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;letter-spacing:.34em;color:var(--gold);text-transform:uppercase;display:flex;align-items:center;gap:.8rem}
+.kicker::after{content:"";flex:0 0 60px;height:3px;background:repeating-linear-gradient(90deg,var(--gold) 0 8px,transparent 8px 14px)}
+.sec-head h2{font-weight:900;font-size:clamp(1.9rem,4.6vw,3rem);letter-spacing:.04em;margin-top:.5rem;text-shadow:0 2px 0 var(--marble2)}
+.sec-head .sub{font-style:italic;font-size:1.05rem;color:var(--ink);opacity:.8;max-width:56ch;margin-top:.4rem}
+
+.reveal{opacity:0;transform:translateY(28px)}
+.reveal.in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+
+/* ---------- HERO ---------- */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(2rem,5vw,4rem);align-items:center;padding-top:clamp(7rem,14vh,9.5rem)}
+.hero h1{font-weight:900;font-size:clamp(3.4rem,9vw,6.6rem);letter-spacing:.06em;line-height:1;margin:.6rem 0 .8rem;display:flex}
+.hero h1 .ch{display:inline-block;animation:drop .7s cubic-bezier(.2,.8,.3,1.2) both;text-shadow:0 4px 0 var(--marble2),0 7px 0 var(--ink)}
+.hero h1 .ch:last-child{color:var(--gold);-webkit-text-stroke:2px var(--ink)}
+@keyframes drop{from{opacity:0;transform:translateY(-70px) rotate(-8deg)}to{opacity:1;transform:none}}
+.epigraph{font-style:italic;font-size:clamp(1.02rem,2vw,1.2rem);max-width:52ch;line-height:1.65}
+.epigraph b{font-style:normal;font-weight:600;background:var(--gold2);border:1.5px solid var(--ink);padding:0 .35em;border-radius:4px;box-shadow:0 2px 0 var(--ink)}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;margin:1.8rem 0 2.2rem}
+.stats{display:grid;grid-template-columns:repeat(4,auto);gap:1rem;width:max-content;max-width:100%}
+.stat{background:var(--marble);border:2px solid var(--ink);border-radius:12px;box-shadow:0 5px 0 var(--ink);padding:.8rem 1.1rem;text-align:center;transition:.2s}
+.stat:hover{transform:translateY(-4px) rotate(-1deg)}
+.stat .num{font-family:'Cinzel',serif;font-weight:900;font-size:1.35rem;display:block}
+.stat .lbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;opacity:.75}
+.hero-right{position:relative;justify-self:center}
+.arch{
+  width:min(380px,80vw);aspect-ratio:4/5;object-fit:cover;display:block;
+  border:3px solid var(--ink);border-radius:999px 999px 18px 18px;
+  box-shadow:0 0 0 8px var(--marble),0 0 0 11px var(--ink),0 16px 0 11px rgba(23,50,78,.85);
+  background:var(--marble);
+}
+.plaque{
+  margin:1.6rem auto 0;width:max-content;max-width:90%;
+  background:var(--ink);color:var(--marble);border:2px solid var(--ink);
+  box-shadow:0 4px 0 var(--gold);border-radius:8px;
+  font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.26em;
+  padding:.55rem 1.1rem;text-transform:uppercase;text-align:center;
+}
+
+/* ---------- MARQUEE ---------- */
+.marquee{background:var(--ink);color:var(--marble);border-block:3px solid var(--ink2);transform:rotate(-1.2deg);margin:1rem calc(50% - 50vw) 0;overflow:hidden;box-shadow:0 6px 0 rgba(23,50,78,.35)}
+.marquee .track{display:flex;width:max-content;animation:slide 26s linear infinite}
+.marquee span{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.85rem;letter-spacing:.3em;padding:.85rem 0;white-space:nowrap;display:flex;align-items:center}
+.marquee i{font-style:normal;color:var(--gold2);padding:0 1.1rem;display:inline-flex}
+.marquee .ic{width:.7em;height:.7em}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* ---------- WORK ---------- */
+.work-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:start}
+.terminal{background:var(--ink2);border:3px solid var(--ink);border-radius:16px;box-shadow:0 10px 0 var(--ink3),0 10px 0 3px var(--marble3);overflow:hidden}
+.term-bar{display:flex;align-items:center;gap:.5rem;background:var(--ink3);padding:.7rem 1rem;border-bottom:2px solid var(--ink)}
+.term-bar .dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--ink)}
+.dot.r{background:var(--terra)}.dot.y{background:var(--gold2)}.dot.g{background:var(--green)}
+.term-bar .ttl{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;color:#7d94b1}
+.terminal pre{padding:1.3rem 1.4rem 1.6rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.75;color:#e8e2d0;min-height:340px;overflow-x:auto}
+.tk-c{color:#7d94b1;font-style:italic}.tk-k{color:var(--gold2)}.tk-s{color:#7fd07f}.tk-n{color:#f0a35e}.tk-f{color:#8ecdf4}
+#cursor{display:inline-block;width:9px;height:1.05em;background:var(--gold2);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.projects{background:var(--marble);border:3px solid var(--ink);border-radius:16px;box-shadow:0 10px 0 var(--ink);padding:1.4rem;display:flex;flex-direction:column;gap:.9rem}
+.projects h3{font-weight:900;font-size:1.1rem;letter-spacing:.1em;border-bottom:2px dashed var(--marble3);padding-bottom:.7rem;display:flex;align-items:center;gap:.6rem}
+.projects h3 .ic{color:var(--gold)}
+.project{display:flex;align-items:center;gap:.9rem;border:2px solid var(--ink);border-radius:12px;background:var(--cloud);padding:.85rem 1rem;box-shadow:0 4px 0 var(--ink);transition:.2s;cursor:default}
+.project:hover{transform:translateX(8px) rotate(-.5deg);background:var(--marble2)}
+.project .lang{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink);flex:none}
+.project .nm{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.88rem}
+.project .ds{font-size:.85rem;font-style:italic;opacity:.8}
+.project .st{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;background:var(--gold2);border:2px solid var(--ink);border-radius:999px;padding:.25rem .6rem;box-shadow:0 2px 0 var(--ink);white-space:nowrap;display:inline-flex;align-items:center;gap:.3rem}
+
+/* ---------- ABOUT ---------- */
+.lore-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:2.5rem;align-items:start}
+.portrait-card{background:var(--marble);border:3px solid var(--ink);border-radius:16px;box-shadow:0 10px 0 var(--ink);padding:1rem;position:sticky;top:100px}
+.portrait-card img{width:100%;border:2px solid var(--ink);border-radius:999px 999px 10px 10px;display:block}
+.portrait-card .cap{font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;text-align:center;padding:.9rem .2rem .3rem}
+.lore-txt p{font-size:1.02rem;line-height:1.75;margin-bottom:1.1rem}
+.lore-txt p:first-of-type::first-letter{font-family:'Cinzel',serif;font-weight:900;font-size:3.2em;float:left;line-height:.85;padding-right:.12em;color:var(--gold);text-shadow:0 3px 0 var(--ink)}
+.timeline{margin:2rem 0;border-left:3px solid var(--ink);padding-left:1.8rem;display:flex;flex-direction:column;gap:1.4rem}
+.tl{position:relative}
+.tl::before{content:"";position:absolute;left:calc(-1.8rem - 9px);top:.35rem;width:14px;height:14px;background:var(--gold2);border:2px solid var(--ink);border-radius:50%;box-shadow:0 3px 0 var(--ink)}
+.tl .yr{font-family:'Cinzel',serif;font-weight:900;letter-spacing:.12em;color:var(--green2)}
+.tl p{margin-top:.15rem;font-style:italic}
+
+/* ---------- TROPHY ---------- */
+.trophy{
+  margin:0 0 1.8rem;display:flex;align-items:center;gap:1.1rem;
+  background:var(--ink);color:var(--cloud);
+  border:2px solid var(--ink);border-radius:14px;box-shadow:0 6px 0 var(--gold);
+  padding:.9rem 1.2rem;transition:.2s;
+}
+.trophy:hover{transform:translateY(-3px) rotate(-1deg)}
+.trophy img{width:74px;height:74px;object-fit:cover;border:2px solid var(--gold2);border-radius:999px 999px 10px 10px;flex:none}
+.trophy .tt{font-family:'Cinzel',serif;font-weight:900;letter-spacing:.14em;color:var(--gold2);display:flex;align-items:center;gap:.5rem}
+.trophy .tt .ic{width:1.1em;height:1.1em;animation:swim 3s ease-in-out infinite}
+@keyframes swim{50%{transform:translateX(5px) rotate(-5deg)}}
+.trophy .ts{font-size:.85rem;font-style:italic;opacity:.85;margin-top:.2rem}
+
+.contact-row{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.2rem}
+
+/* ---------- FOOTER ---------- */
+footer{margin-top:3rem;background:var(--ink);color:var(--marble);border-top:3px solid var(--ink2);position:relative}
+footer .trim{height:10px;background:repeating-linear-gradient(90deg,var(--gold2) 0 14px,var(--ink) 14px 22px)}
+.foot-in{max-width:1180px;margin:0 auto;padding:3rem clamp(1rem,4vw,2rem) 2.4rem;text-align:center}
+.foot-in .big{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(2rem,6vw,3.4rem);letter-spacing:.3em;color:var(--gold2);text-shadow:0 4px 0 var(--ink3)}
+.foot-in .tag{font-style:italic;margin-top:.8rem;font-size:1.02rem}
+.foot-in .fine{font-size:.85rem;font-style:italic;opacity:.7;margin-top:1rem}
+
+/* ---------- TOAST ---------- */
+#toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,80px);background:var(--ink);color:var(--gold2);font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.78rem;letter-spacing:.12em;border:2px solid var(--gold);border-radius:999px;padding:.8rem 1.5rem;z-index:300;transition:.35s cubic-bezier(.2,.8,.2,1);box-shadow:0 6px 0 var(--ink3);display:flex;align-items:center;gap:.5rem}
+#toast.show{transform:translate(-50%,0)}
+
+/* ---------- RESPONSIVE ---------- */
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr;text-align:center}
+  .hero h1{justify-content:center}
+  .epigraph{margin:0 auto}
+  .hero-cta{justify-content:center}
+  .stats{justify-content:center;margin-left:auto;margin-right:auto;grid-template-columns:repeat(2,auto)}
+  .work-grid,.lore-grid{grid-template-columns:1fr}
+  .portrait-card{position:static;max-width:420px;margin:0 auto}
+}
+@media(max-width:840px){
+  nav.links{display:none}
+  #burger{display:block}
+}
+</style>
+</head>
+<body>
+
+<!-- SVG ICON SET -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h14M12 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.6l2.8 6 6.6.7-4.9 4.4 1.4 6.5-5.9-3.4-5.9 3.4 1.4-6.5L2.6 9.3l6.6-.7z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="18" r="2.6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="8" r="2.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 8.6v6.8M15.5 9.5C13 12 9 11 6.6 13.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2L4 14h6l-1 8 9-12h-6z"/></symbol>
+  <symbol id="i-shark" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M1 12C4 7.5 10 5.5 15 6.8l2 .4 6-3.7-2.6 8.5 2.6 8.5-6-3.7-2 .4C10 18.5 4 16.5 1 12z"/>
+    <path fill="currentColor" d="M9 6.9L11.5 2.6l1.9 4.6z"/>
+    <circle cx="5.4" cy="10.4" r="1.1" fill="#17324e"/>
+  </symbol>
+  <symbol id="i-dia" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3l8 9-8 9-8-9z"/></symbol>
+</svg>
+
+<div id="sky">
+  <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
+  <div class="cloud"></div><div class="cloud"></div><div class="cloud"></div>
+</div>
+<div id="progress"></div>
+
+<header>
+  <div class="seal" id="seal" title="Back to top">G8</div>
+  <nav class="links">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <button id="burger" aria-label="Open menu"><svg class="ic"><use href="#i-menu"/></svg></button>
+</header>
+<div id="mobileMenu">
+  <a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a>
+</div>
+
+<main>
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <div class="hero-left">
+      <div class="kicker mono">PROGRAMMER · BUILDER · SINCE 2025</div>
+      <h1 aria-label="GUGU8">
+        <span class="ch" style="animation-delay:.05s">G</span><span class="ch" style="animation-delay:.15s">U</span><span class="ch" style="animation-delay:.25s">G</span><span class="ch" style="animation-delay:.35s">U</span><span class="ch" style="animation-delay:.45s">8</span>
+      </h1>
+      <p class="epigraph">Hi, I'm Gugu8. I write code that ships, tools that last —
+        and I make everything <b>high performance</b>. This page is my workshop: look around, and say hello if you like what you see.</p>
+      <div class="hero-cta">
+        <a href="#work" class="btn btn-gold">See my work <svg class="ic"><use href="#i-arrow"/></svg></a>
+        <a href="#contact" class="btn">Get in touch</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="num" data-n="307">0</span><span class="lbl">Commits so far</span></div>
+        <div class="stat"><span class="num" data-n="5">0</span><span class="lbl">Projects shipped</span></div>
+        <div class="stat"><span class="num" data-n="11">0</span><span class="lbl">Stars earned</span></div>
+        <div class="stat"><span class="num" data-n="2025" data-raw="1">0</span><span class="lbl">Joined GitHub</span></div>
+      </div>
+    </div>
+    <div class="hero-right reveal">
+      <img class="arch" src="https://image.qwenlm.ai/public_source/0d19cb77-ebe2-4bca-b96e-14982e45aca6/1b69a47c1-14a5-4989-9917-d193a0f1738c.png" alt="An illustrated colosseum — my workshop in the clouds">
+      <div class="plaque">MY WORKSHOP · OPEN SINCE 2025</div>
+    </div>
+  </section>
+
+  <div class="marquee"><div class="track" id="mtrack">
+    <span>HIGH PERFORMANCE<i><svg class="ic"><use href="#i-dia"/></svg></i>BENCHMARKED<i><svg class="ic"><use href="#i-dia"/></svg></i>PROFILED<i><svg class="ic"><use href="#i-dia"/></svg></i>OPTIMIZED<i><svg class="ic"><use href="#i-dia"/></svg></i>TESTED<i><svg class="ic"><use href="#i-dia"/></svg></i>SHIPPED<i><svg class="ic"><use href="#i-dia"/></svg></i>MAINTAINED<i><svg class="ic"><use href="#i-dia"/></svg></i></span>
+  </div></div>
+
+  <!-- ============ WORK ============ -->
+  <section id="work">
+    <div class="sec-head reveal">
+      <div class="kicker">01 · CODE</div>
+      <h2>The Work</h2>
+      <p class="sub">Five projects, one habit: everything I make is fast. The terminal below is live — watch me work.</p>
+    </div>
+    <div class="work-grid">
+      <div class="terminal reveal">
+        <div class="term-bar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="ttl">gugu8@workshop:~/main.slop</span>
+        </div>
+        <pre><code id="termCode"></code><span id="cursor"></span></pre>
+      </div>
+      <div class="projects reveal">
+        <h3 class="cinzel"><svg class="ic"><use href="#i-bolt"/></svg> THINGS I'VE BUILT</h3>
+        <div class="project"><span class="lang" style="background:#d0678f"></span><div><div class="nm">Slop Engine</div><div class="ds">A game engine that stays smooth on potato hardware.</div></div><span class="st"><svg class="ic"><use href="#i-star"/></svg> 4</span></div>
+        <div class="project"><span class="lang" style="background:#8a6fc9"></span><div><div class="nm">Slop</div><div class="ds">My own programming language. Small, fast, and simple.</div></div><span class="st"><svg class="ic"><use href="#i-star"/></svg> 2</span></div>
+        <div class="project"><span class="lang" style="background:var(--terra)"></span><div><div class="nm">Rust NN</div><div class="ds">A neural network in pure Rust — no heavy framework needed.</div></div><span class="st"><svg class="ic"><use href="#i-star"/></svg> 2</span></div>
+        <div class="project"><span class="lang" style="background:var(--sky2)"></span><div><div class="nm">Bullet Scrape</div><div class="ds">My alternative to scraping: quicker, lighter, kinder to servers.</div></div><span class="st"><svg class="ic"><use href="#i-star"/></svg> 1</span></div>
+        <div class="project"><span class="lang" style="background:var(--green)"></span><div><div class="nm">abv0</div><div class="ds">A faster, high-performance alternative to Homebrew.</div></div><span class="st"><svg class="ic"><use href="#i-star"/></svg> 2</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section id="about">
+    <div class="sec-head reveal">
+      <div class="kicker">02 · STORY</div>
+      <h2>About Me</h2>
+    </div>
+    <div class="lore-grid">
+      <div class="portrait-card reveal">
+        <img src="https://image.qwenlm.ai/public_source/0d19cb77-ebe2-4bca-b96e-14982e45aca6/14dd9007b-eba4-4266-8ba2-e8ce8b853b41.png" alt="An illustrated portrait of me, laurel-crowned at my laptop">
+        <div class="cap">GUGU8 · PROGRAMMER &amp; BUILDER</div>
+      </div>
+      <div class="lore-txt reveal">
+        <p>I joined GitHub in 2025 and started building in public right away. My first real program was slow, so I rewrote it — and I've been chasing speed ever since. Everything I make is high performance, not as a feature, but as a habit.</p>
+        <p>307 commits later, that habit has grown into a hobby language called Slop, a game engine, a Rust neural network, and an installer that outruns Homebrew. Somewhere along the way I earned the Pull Shark — and I'm still just getting started.</p>
+
+        <div class="trophy">
+          <img src="https://image.qwenlm.ai/public_source/0d19cb77-ebe2-4bca-b96e-14982e45aca6/11612fa65-4bde-47f2-bc51-164e314f93ef.png" alt="The Pull Shark, swimming past a marble column">
+          <div>
+            <div class="tt"><svg class="ic"><use href="#i-shark"/></svg> PULL SHARK</div>
+            <div class="ts">GitHub achievement, earned by merged pull requests. The shark lives here now.</div>
+          </div>
+        </div>
+
+        <div class="timeline">
+          <div class="tl"><span class="yr">2025</span><p>Joined GitHub. First real project: Slop, my own little programming language.</p></div>
+          <div class="tl"><span class="yr">2025</span><p>Slop Engine arrived — a game engine that runs smoothly on anything.</p></div>
+          <div class="tl"><span class="yr">2026</span><p>Rust NN, Bullet Scrape and abv0 join the shelf. Everything high performance.</p></div>
+          <div class="tl"><span class="yr">2026</span><p>307 commits in, the Pull Shark is mine. The workshop is open.</p></div>
+        </div>
+
+        <div id="contact">
+          <h3 class="cinzel" style="letter-spacing:.1em;margin-bottom:.4rem">SAY HELLO</h3>
+          <p>The fastest way to reach me is email — fitting, since fast is my whole thing. I read everything and usually answer within a day.</p>
+          <div class="contact-row">
+            <button class="btn btn-ink" id="ghBtn"><svg class="ic"><use href="#i-branch"/></svg> GitHub</button>
+            <button class="btn btn-gold" id="mailBtn"><svg class="ic"><use href="#i-mail"/></svg> g73447476@gmail.com</button>
+            <button class="btn" id="notesBtn">Read my notes <svg class="ic"><use href="#i-arrow"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="trim"></div>
+  <div class="foot-in">
+    <div class="big">GUGU8</div>
+    <div class="tag">I build things that last — and they run fast.</div>
+    <div class="fine">© 2026 Gugu8. Written, designed and coded by me — no template involved.</div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+/* ================= HELPERS ================= */
+const $ = s => document.querySelector(s);
+let toastTimer;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* ================= MARQUEE (loop) ================= */
+$('#mtrack').innerHTML += $('#mtrack').innerHTML;
+
+/* ================= SCROLL PROGRESS + REVEALS ================= */
+addEventListener('scroll', ()=>{
+  const h = document.documentElement;
+  $('#progress').style.width = (h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+},{passive:true});
+
+const io = new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ================= COUNTERS ================= */
+const cio = new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting) return; cio.unobserve(e.target);
+  const el = e.target, end = +el.dataset.n, suf = el.dataset.suf||'', raw = el.dataset.raw, t0 = performance.now();
+  (function tick(t){
+    const p = Math.min((t-t0)/1400, 1), v = Math.round(end*(1-Math.pow(1-p,3)));
+    el.textContent = (raw ? String(v) : v.toLocaleString('en-US')) + suf;
+    if(p<1) requestAnimationFrame(tick);
+  })(t0);
+}),{threshold:.6});
+document.querySelectorAll('.stat .num').forEach(el=>cio.observe(el));
+
+/* ================= LIVE TERMINAL TYPEWRITER (in Slop) ================= */
+const CODE = [
+ [['c','// main.slop — written in my own language']],
+ [['k','fn'],['p',' '],['f','main'],['p','() {']],
+ [['p','    '],['k','let'],['p',' t = '],['f','now'],['p','();']],
+ [['p','    '],['f','print'],['p','('],['s','"hello, fast."'],['p',');']],
+ [['p','    '],['k','assert'],['p','('],['f','now'],['p','() - t < '],['n','1'],['p',' '],['k','ms'],['p',');  '],['c','// everything I ship is quick']],
+ [['p','}']],
+ [['p','']],
+ [['c','// $ slop run main.slop']],
+ [['c','// hello, fast.']],
+ [['c','// 307 commits in — still under 1ms']]
+];
+let typed = false;
+const tio = new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting && !typed){ typed = true; typeCode(); tio.disconnect(); }
+}),{threshold:.3});
+tio.observe($('.terminal'));
+function typeCode(){
+  const out = $('#termCode'); let li = 0;
+  function line(){
+    if(li >= CODE.length) return;
+    const div = document.createElement('div'); out.appendChild(div);
+    const toks = CODE[li];
+    if(toks.length===0 || toks[0][1]===''){ div.innerHTML='&nbsp;'; li++; setTimeout(line, 40); return; }
+    let ti = 0;
+    function nextTok(){
+      if(ti >= toks.length){ li++; setTimeout(line, 90); return; }
+      const [cls, txt] = toks[ti];
+      const span = document.createElement('span'); span.className = 'tk-'+cls; div.appendChild(span);
+      let ci = 0;
+      (function ch(){
+        span.textContent = txt.slice(0, ++ci);
+        if(ci < txt.length) setTimeout(ch, 14);
+        else { ti++; nextTok(); }
+      })();
+    }
+    nextTok();
+  }
+  line();
+}
+
+/* ================= NAV / MISC ================= */
+$('#burger').onclick = ()=> $('#mobileMenu').classList.toggle('open');
+$('#mobileMenu').addEventListener('click', e=>{ if(e.target.tagName==='A') $('#mobileMenu').classList.remove('open'); });
+$('#seal').onclick = ()=> scrollTo({top:0, behavior:'smooth'});
+$('#mailBtn').onclick = ()=>{
+  (navigator.clipboard ? navigator.clipboard.writeText('g73447476@gmail.com') : Promise.resolve())
+    .finally(()=>toast('Email copied: g73447476@gmail.com'));
+};
+$('#ghBtn').onclick = ()=> toast('github.com/gugu8 — where the work lives');
+$('#notesBtn').onclick = ()=> toast('My notebook opens soon. Check back!');
+addEventListener('keydown', e=>{ if(e.key==='Escape') $('#mobileMenu').classList.remove('open'); });
+</script>
+</body>
+</html>
